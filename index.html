@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter Clicker App</title>
+</head>
+
+<body>
+    <form>
+        <input type="number" readonly disabled>
+        <input type="button" value="Click" onclick="increment()">
+        <input type="reset" value="Reset">
+    </form>
+    <script>
+        const counter = document.querySelector('[type="number"]');
+        window.onload = () => {
+            counter.value = sessionStorage.getItem('count') || 0;
+
+            const form = document.querySelector('form');
+            form.onreset = event => {
+                event.preventDefault();
+                counter.value = 0;
+                sessionStorage.clear();
+            };
+        };
+
+        function increment() {
+            counter.value = (parseInt(counter.value) || 0) + 1;
+            sessionStorage.setItem('count', counter.value);
+
+            if (!("Notification" in window)) {
+                // Check if the browser supports notifications
+                console.warn("This browser does not support desktop notification");
+            } else if (Notification.permission === "granted") {
+                // Check whether notification permissions have already been granted;
+                // if so, create a notification
+                const notification = new Notification("Hi there!");
+                // …
+            } else if (Notification.permission !== "denied") {
+                // We need to ask the user for permission
+                Notification.requestPermission().then((permission) => {
+                    // If the user accepts, let's create a notification
+                    if (permission === "granted") {
+                        const notification = new Notification(`Clicker Count: ${counter.value}`);
+                        // …
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
